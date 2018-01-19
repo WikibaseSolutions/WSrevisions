@@ -1,6 +1,6 @@
 <?php
 /**
- * Aliases for special pages of the WBRate extension
+ * Aliases for special pages of the WSrevision extension
  *
  * @file
  * @ingroup Extensions

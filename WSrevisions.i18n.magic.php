@@ -1,6 +1,6 @@
 <?php
 /**
- * Magic words of the WBRate extension
+ * Magic words of the WSrevision extension
  *
  * @file
  * @ingroup Extensions

@@ -1,6 +1,6 @@
 <?php
 /**
- * Overview for the WSgetContent extension
+ * Overview for the WSrevisions extension
  *
  * @file
  * @ingroup Extensions

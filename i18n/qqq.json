@@ -6,6 +6,6 @@
 	},
 	"wsrevisions-desc": "WSrevisions",
 	"wsrevisions-i18n-welcome": "Used to greet the user when reading the i18n/??.json file.",
-	"wsrevisions-title": "Page title of the HelloWorld special page.\n{{Identical|Hello World}}",
-	"wsrevisions--intro": "Text displayed on the HelloWorld SpecialPage."
+	"wsrevisions-title": "Page title of the WSrevision special page.",
+	"wsrevisions--intro": "Text displayed on the WSrevision SpecialPage."
 }

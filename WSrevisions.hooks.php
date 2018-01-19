@@ -1,6 +1,6 @@
 <?php
 /**
- * Hooks for WSLookup extension
+ * Hooks for WSrevision extension
  *
  * @file
  * @ingroup Extensions
@@ -40,19 +40,6 @@ class WSrevisionsHooks {
 			$dbr->IngoreErrors = true;
 			try {
 					$result = $dbr->query($sql, __METHOD__);
-	 /*       echo "<p>$sql</p>";
-					foreach ($result->result as $res) {
-							echo "<pre>";
-							echo $res['total'];
-							print_r($res);
-							echo "</pre>";
-					}
-*/
-				 //$tmp = $result->result();
-				 // echo "<pre>";
-				 // echo  $dbr->numRows($result);
-				 // print_r($result->result);
-				 // echo "</pre>";
 					return $result;
 			} catch (Exception $e) {
 					echo "<pre>";
@@ -62,26 +49,26 @@ class WSrevisionsHooks {
 			}
 	}
 
+/**
+ * When extension first called.. Setup hooks for magic words
+ * @param  Parser $parser [description]
+ * @return [type]         [description]
+ */
 	public static function onParserFirstCallInit( Parser &$parser ) {
 		$parser->setFunctionHook( 'ws_check_nme', 'WSrevisionsHooks::getRevisionsInfo' );
 		$parser->setFunctionHook( 'ws_size_diff', 'WSrevisionsHooks::getRevisionsSizeDiff' );
 	}
+
 	/**
-	 * [getContent description]
+	 * [WSrevision have there been Major revisions in th last x days starting from date ...]
 	 * @param  Parser $parser [description]
-	 * @return [type]         [description]
+	 * @return [string]         [either ("Yes" or "No") or (0 or the amount of revisions)]
 	 */
 	public static function getRevisionsInfo( Parser &$parser ) {
-		// Called in MW text like this: {{#something: }}
-
-		// For named parameters like {{#something: foo=bar | apple=orange | banana }}
-		// See: https://www.mediawiki.org/wiki/Manual:Parser_functions#Named_parameters
 		$mysqldateformat = "YmdHis";
 		$options = WSrevisionsHooks::extractOptions( array_slice(func_get_args(), 1) );
-		global $wgOut;
 		global $wgDBprefix;
-		//echo "<BR><BR><BR>";
-		//print_r($options);
+
 		if (isset($options['pageid']) && $options['pageid'] != '' && is_numeric($options['pageid']) ) {
 			$pid = $options['pageid'];
 		} elseif( is_numeric(key($options)) ) {
@@ -91,13 +78,11 @@ class WSrevisionsHooks {
 		if (isset($options['count']) ) {
 			$count=true;
 		} else $count=false;
+
 		if (isset($options['date']) && $options['date'] != '') {
-			//echo "<BR><BR><BR><BR>Date = ".$options['date']."<BR>";
 			$date = $options['date'];
-			//echo "<BR>Date = $date<BR>";
 		} else {
 			$date = date($mysqldateformat);
-			//echo "<BR>Date = $date<BR>";
 		}
 
 		if (isset($options['interval']) && $options['interval'] != '' && is_numeric($options['interval'])) {
@@ -106,46 +91,23 @@ class WSrevisionsHooks {
 
 		$datum = date($mysqldateformat, strtotime("-".$interval." days", strtotime($date)));
 		$date = date($mysqldateformat, strtotime($date));
-		//echo "<BR>Datum = $datum<BR>";
+		$sql = "SELECT rev_timestamp FROM ".$wgDBprefix."revision WHERE rev_minor_edit='0' AND rev_page='".$pid."' AND (rev_timestamp < '".$date."' AND rev_timestamp > '".$datum."')";
+		$db = self::db_open();
+		$q = $db->query($sql);
 
+		if ($q->num_rows > 0 ) {
+			if($count) {
+				$lst = $q->num_rows;
+			} else $lst = "Yes";
+    } else {
+			if($count) {
+				$lst=0;
+			}else $lst="No";
+		}
 
-			//$sql = "SELECT rev_timestamp FROM ".$wgDBprefix."revision WHERE rev_minor_edit='0' AND rev_page='".$options['pageid']."'";
-			$sql = "SELECT rev_timestamp FROM ".$wgDBprefix."revision WHERE rev_minor_edit='0' AND rev_page='".$pid."' AND (rev_timestamp < '".$date."' AND rev_timestamp > '".$datum."')";
-			//$db = WSrevisionsHooks::rawSelect    20180111143222  20180118110116
-			$db = self::db_open();
-			$q = $db->query($sql);
-			//echo "<BR><BR><BR>";
-			//echo "<p>tussen $date en $datum</p>";
-			//echo $sql;
-			//print_r($q);
-			if ($q->num_rows > 0 ) {
-				if($count) {
-					$lst = $q->num_rows;
-				} else $lst = "Yes";
-/*
-          while ($row = $q->fetch_assoc()) {
-						echo "<pre>";
-            print_r($row);
-echo "</pre>";
-
-           //if (WSssd::debug) echo "<p>-- Agency id:".$row['agency_id']."has count : ".$row['cc']."</p>";
-
-          }
-
-          //if (WSssd::debug) echo "<p>numbers of lines with issue id : ".$value .":: ".count($data)."</p>";
-					*/
-        } else {
-				if($count) {
-					$lst=0;
-				}else $lst="No";
-			}
-        $db->close();
-				//echo $where;
-
-
-			return array($lst, 'noparse' => false);
+    $db->close();
+		return array($lst, 'noparse' => false);
 	  }
-
 
 
 	public static function getRevisionsSizeDiff( Parser &$parser ) {
