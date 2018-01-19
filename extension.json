@@ -10,6 +10,7 @@
 	"type": "parserhook",
 	"AutoloadClasses": {
 		"WSrevisionsHooks": "WSrevisions.hooks.php",
+		"WSrevionsFunctions": "WSrevisions.class.php",
 		"WSrevisions": "specials/WSrevisionsSpecial.php"
 	},
 	"ExtensionMessagesFiles": {
