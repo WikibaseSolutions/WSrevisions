@@ -1,0 +1,34 @@
+{
+	"name": "WSrevisions",
+	"version": "0.1.0",
+	"author": [
+		"Sen-Sai"
+	],
+	"url": "https://www.google.nl/search?num=100&newwindow=1&site=&source=hp&q=wiki+wiki+wild+wild&oq=wiki+wiki+wild+wild",
+	"descriptionmsg": "wsrevisions-desc",
+	"license-name": "GPL v2",
+	"type": "parserhook",
+	"AutoloadClasses": {
+		"WSrevisionsHooks": "WSrevisions.hooks.php",
+		"WSrevisions": "specials/WSrevisionsSpecial.php"
+	},
+	"ExtensionMessagesFiles": {
+		"WBRateAlias": "WSrevisions.i18n.alias.php"
+	},
+	"Hooks": {
+		"ParserFirstCallInit": [
+			"WSrevisionsHooks::onParserFirstCallInit"
+		]
+	},
+	"MessagesDirs": {
+		"WSgetContent": [
+			"i18n"
+		]
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "",
+		"remoteExtPath": "WSrevisions"
+	},
+
+	"manifest_version": 1
+}
