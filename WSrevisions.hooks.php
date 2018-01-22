@@ -128,7 +128,7 @@ class WSrevisionsHooks {
 		if ( $q->num_rows > 0 ) {
 			$row = $q->fetch_assoc();
 			$length_previous_version = $row['rev_len'];
-		} else return "0";
+		} else return $length_current_page;
 		$db->close();
 		$ret = $length_current_page - $length_previous_version;
 
