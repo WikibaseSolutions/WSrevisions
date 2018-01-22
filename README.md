@@ -1,4 +1,4 @@
-# WBrevisions
+# WSrevisions
 
 Some revision based queries
 
