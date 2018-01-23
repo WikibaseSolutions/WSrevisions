@@ -45,6 +45,21 @@ class WSrevionsFunctions {
 	}
 
 	/**
+	 * Return ignore Mindor Edits from parser options
+	 *
+	 * @param  [array] $options [parser options given by user]
+	 *
+	 * @return [bool]           [true or false -- yes or no]
+	 */
+	public static function ignoreMinorEdits( $options ) {
+		if ( isset( $options['ignoreme'] ) ) {
+			return "rev_minor_edit='0' AND ";
+		} else {
+			return "";
+		}
+	}
+
+	/**
 	 * check if user input is a valid date
 	 *
 	 * @param $date

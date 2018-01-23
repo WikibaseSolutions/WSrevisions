@@ -43,6 +43,7 @@ class WSrevisionsHooks {
 	public static function onParserFirstCallInit( Parser &$parser ) {
 		$parser->setFunctionHook( 'ws_check_nme', 'WSrevisionsHooks::getRevisionsInfo' );
 		$parser->setFunctionHook( 'ws_size_diff', 'WSrevisionsHooks::getRevisionsSizeDiff' );
+		$parser->setFunctionHook( 'ws_get_revid', 'WSrevisionsHooks::getRevisionsID' );
 	}
 
 	/**
@@ -67,8 +68,7 @@ class WSrevisionsHooks {
 		$datum    = WSrevionsFunctions::getPreviousDate( $interval, $date );
 		$date     = WSrevionsFunctions::convertDateForSQL( $date );
 
-
-		$sql = "SELECT rev_timestamp FROM " . $wgDBprefix . "revision WHERE rev_minor_edit='0' AND rev_page='" . $pid . "' AND (rev_timestamp < '" . $date . "' AND rev_timestamp > '" . $datum . "')";
+		$sql = "SELECT rev_timestamp FROM " . $wgDBprefix . "revision rev_minor_edit='0' AND rev_page='" . $pid . "' AND (rev_timestamp < '" . $date . "' AND rev_timestamp > '" . $datum . "')";
 
 		$db  = self::db_open();
 		$q   = $db->query( $sql );
@@ -111,9 +111,10 @@ class WSrevisionsHooks {
 		$interval = WSrevionsFunctions::getInterval( $options );
 		$datum    = WSrevionsFunctions::getPreviousDate( $interval, $date );
 		$date     = WSrevionsFunctions::convertDateForSQL( $date );
+		$ignore_me= WSrevionsFunctions::ignoreMinorEdits( $options );
 
 
-		$sql = "SELECT rev_len FROM " . $wgDBprefix . "revision WHERE rev_minor_edit='0' AND rev_page='" . $pid . "' AND (rev_timestamp <= '".$date."') ORDER BY rev_timestamp DESC LIMIT 1";
+		$sql = "SELECT rev_len FROM " . $wgDBprefix . "revision WHERE " . $ignore_me . " rev_page='" . $pid . "' AND (rev_timestamp <= '".$date."') ORDER BY rev_timestamp DESC LIMIT 1";
 		$db  = self::db_open();
 		$q   = $db->query( $sql );
 
@@ -122,7 +123,7 @@ class WSrevisionsHooks {
 			$length_current_page = $row['rev_len'];
 		} else return "No current revision for this page";
 
-		$sql = "SELECT rev_len FROM " . $wgDBprefix . "revision WHERE rev_minor_edit='0' AND rev_page='" . $pid . "' AND (rev_timestamp < '".$datum."') ORDER BY rev_timestamp DESC LIMIT 1";
+		$sql = "SELECT rev_len FROM " . $wgDBprefix . "revision WHERE " . $ignore_me . " rev_page='" . $pid . "' AND (rev_timestamp < '".$datum."') ORDER BY rev_timestamp DESC LIMIT 1";
 		$q   = $db->query( $sql );
 
 		if ( $q->num_rows > 0 ) {
@@ -132,6 +133,40 @@ class WSrevisionsHooks {
 		$db->close();
 		$ret = $length_current_page - $length_previous_version;
 
+		return array( $ret, 'noparse' => false );
+
+	}
+
+	/**
+	 * Get a revision id
+	 * @param Parser $parser
+	 *
+	 * @return int id
+	 */
+	public static function getRevisionsID( Parser &$parser ) {
+		global $wgDBprefix;
+
+		$options = WSrevisionsHooks::extractOptions( array_slice( func_get_args(), 1 ) );
+		$pid     = WSrevionsFunctions::getPageID( $options );
+		if ( ! $pid ) {
+			return "No page ID";
+		}
+		$date     = WSrevionsFunctions::getDate( $options );
+		if( !$date ) return "invalid date";
+		$interval = WSrevionsFunctions::getInterval( $options );
+		$datum    = WSrevionsFunctions::getPreviousDate( $interval, $date );
+		$date     = WSrevionsFunctions::convertDateForSQL( $date );
+		$ignore_me= WSrevionsFunctions::ignoreMinorEdits( $options );
+
+		$sql = "SELECT rev_id FROM " . $wgDBprefix . "revision WHERE " . $ignore_me . " rev_page='" . $pid . "' AND (rev_timestamp < '".$datum."') ORDER BY rev_timestamp DESC LIMIT 1";
+		$db  = self::db_open();
+		$q   = $db->query( $sql );
+
+		if ( $q->num_rows > 0 ) {
+			$row = $q->fetch_assoc();
+			$ret = $row['rev_id'];
+		} else return 0;
+		$db->close();
 		return array( $ret, 'noparse' => false );
 
 	}
