@@ -1,6 +1,6 @@
 {
 	"name": "WSrevisions",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"author": [
 		"Sen-Sai"
 	],
@@ -10,19 +10,19 @@
 	"type": "parserhook",
 	"AutoloadClasses": {
 		"WSrevisionsHooks": "WSrevisions.hooks.php",
-		"WSrevionsFunctions": "WSrevisions.class.php",
-		"WSrevisions": "specials/WSrevisionsSpecial.php"
+		"WSrevisionsFunctions": "WSrevisionsFunctions.php"
 	},
 	"ExtensionMessagesFiles": {
-		"WBRateAlias": "WSrevisions.i18n.alias.php"
+		"WSrevisionsMagic": "WSrevisions.i18n.magic.php"
 	},
+
 	"Hooks": {
 		"ParserFirstCallInit": [
 			"WSrevisionsHooks::onParserFirstCallInit"
 		]
 	},
 	"MessagesDirs": {
-		"WSgetContent": [
+		"WSrevisions": [
 			"i18n"
 		]
 	},
