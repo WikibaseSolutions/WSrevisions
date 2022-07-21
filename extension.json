@@ -1,35 +1,33 @@
 {
-	"name": "WSrevisions",
-	"version": "0.1.3",
-	"author": [
-		"Sen-Sai"
-	],
-	"url": "https://wikibase-solutions.com",
-	"descriptionmsg": "wsrevisions-desc",
-	"license-name": "GPL v2",
-	"type": "parserhook",
-	"AutoloadClasses": {
-		"WSrevisionsHooks": "WSrevisions.hooks.php",
-		"WSrevisionsFunctions": "WSrevisionsFunctions.php"
-	},
-	"ExtensionMessagesFiles": {
-		"WSrevisionsMagic": "WSrevisions.i18n.magic.php"
-	},
-
-	"Hooks": {
-		"ParserFirstCallInit": [
-			"WSrevisionsHooks::onParserFirstCallInit"
-		]
-	},
-	"MessagesDirs": {
-		"WSrevisions": [
-			"i18n"
-		]
-	},
-	"ResourceFileModulePaths": {
-		"localBasePath": "",
-		"remoteExtPath": "WSrevisions"
-	},
-
-	"manifest_version": 1
+  "name": "WSrevisions",
+  "version": "0.1.3",
+  "author": [
+    "Sen-Sai"
+  ],
+  "url": "https://wikibase-solutions.com",
+  "descriptionmsg": "wsrevisions-desc",
+  "license-name": "GPL v2",
+  "type": "parserhook",
+  "AutoloadClasses": {
+    "WSrevisionsHooks": "WSrevisions.hooks.php",
+    "WSrevisionsFunctions": "WSrevisionsFunctions.php"
+  },
+  "ExtensionMessagesFiles": {
+    "WSrevisionsMagic": "WSrevisions.i18n.magic.php"
+  },
+  "Hooks": {
+    "ParserFirstCallInit": [
+      "WSrevisionsHooks::onParserFirstCallInit"
+    ]
+  },
+  "MessagesDirs": {
+    "WSrevisions": [
+      "i18n"
+    ]
+  },
+  "ResourceFileModulePaths": {
+    "localBasePath": "",
+    "remoteExtPath": "WSrevisions"
+  },
+  "manifest_version": 1
 }

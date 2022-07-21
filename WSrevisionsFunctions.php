@@ -4,6 +4,7 @@ class WSrevisionsFunctions {
 
 	/**
 	 * Get Wiki sql timeformat
+	 *
 	 * @return string time format
 	 */
 	public static function mysqldateformat(): string {
