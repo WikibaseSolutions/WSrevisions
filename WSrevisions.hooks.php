@@ -6,9 +6,6 @@
  * @ingroup Extensions
  */
 
-ERROR_REPORTING( E_ALL );
-ini_set( 'display_errors', 1 );
-
 class WSrevisionsHooks {
 
 
@@ -51,7 +48,7 @@ class WSrevisionsHooks {
 	 *
 	 * @param Parser $parser [description]
 	 *
-	 * @return array|string [either ("Yes" or "No") or (0 or the amount of revisions)]
+	 * @return array|string [either ("Yes" or "No") or ("0" or (string) the amount of revisions)]
 	 */
 	public static function getRevisionsInfo( Parser &$parser ) {
 		global $wgDBprefix;
@@ -92,7 +89,7 @@ class WSrevisionsHooks {
 
 		$db->close();
 
-		return array( $lst, 'noparse' => false );
+		return array( strval( $lst ), 'noparse' => false );
 	}
 
 	/**
@@ -100,7 +97,7 @@ class WSrevisionsHooks {
 	 *
 	 * @param Parser $parser
 	 *
-	 * @return string|int|array size in bytes
+	 * @return string|array size in bytes (As string, can be negative)
 	 */
 	public static function getRevisionsSizeDiff( Parser &$parser ) {
 		global $wgDBprefix;
@@ -129,6 +126,7 @@ class WSrevisionsHooks {
 			$row                 = $q->fetch_assoc();
 			$length_current_page = $row['rev_len'];
 		} else {
+			$db->close();
 			return "No current revision for this page";
 		}
 
@@ -140,12 +138,13 @@ class WSrevisionsHooks {
 			$row                     = $q->fetch_assoc();
 			$length_previous_version = $row['rev_len'];
 		} else {
+			$db->close();
 			return $length_current_page;
 		}
 		$db->close();
 		$ret = $length_current_page - $length_previous_version;
 
-		return array( $ret, 'noparse' => false );
+		return array( strval( $ret ), 'noparse' => false );
 
 	}
 
@@ -154,7 +153,7 @@ class WSrevisionsHooks {
 	 *
 	 * @param Parser $parser
 	 *
-	 * @return int|string|array id
+	 * @return string|array id as string
 	 */
 	public static function getRevisionsID( Parser &$parser ) {
 		global $wgDBprefix;
@@ -182,11 +181,12 @@ class WSrevisionsHooks {
 			$row = $q->fetch_assoc();
 			$ret = $row['rev_id'];
 		} else {
-			return 0;
+			$db->close();
+			return '0';
 		}
 		$db->close();
 
-		return array( $ret, 'noparse' => false );
+		return array( strval( $ret ), 'noparse' => false );
 
 	}
 
